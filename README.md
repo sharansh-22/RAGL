@@ -12,7 +12,7 @@ Its sole objective is to discover, through controlled experimentation, what obje
 
 ---
 
-## Philosophy & Core Principles
+## Philosophy
 
 The RAGL project operates under a strict scientific philosophy:
 
@@ -27,6 +27,22 @@ The RAGL project operates under a strict scientific philosophy:
 
 ---
 
+## Benchmark Once Compare Forever
+
+RAGL enforces a strict policy regarding evaluation: **A completed experiment must never be rerun solely for comparison.**
+
+Once an experiment has been benchmarked and accepted, its generated answers, benchmark metrics, reports, plots, and cached evidence become the canonical reference. Future experiments must compare against stored artifacts instead of regenerating previous experiments.
+
+Previous experiments may only be rerun if:
+- The implementation changes.
+- The benchmark dataset changes.
+- The evaluation framework changes in a way that invalidates previous metrics.
+- A completely new baseline is intentionally being established.
+
+Benchmarking and comparison are separate operations. Every accepted experiment becomes **Frozen**.
+
+---
+
 ## Scientific Workflow
 
 Every architectural decision is made through a strict process:
@@ -35,29 +51,12 @@ Every architectural decision is made through a strict process:
 2. **Copy**: Duplicate the configuration into a new experiment (e.g., `A/A1/`).
 3. **Modify**: Change exactly one variable.
 4. **Benchmark**: Run the experiment against the evaluation datasets.
-5. **Compare**: Analyze the metrics against the current baseline.
+5. **Compare**: Analyze the metrics against the current baseline using cached artifacts.
 6. **Accept or Reject**: Conduct a human engineering review to make the final decision.
    - If accepted: The successor becomes the new Reference Implementation.
    - If rejected: The predecessor remains unchanged.
 
-### Git Versioning
-
-Every accepted experiment becomes a permanent Git milestone.
-
-Suggested workflow:
-`A0 -> git tag A0 -> A1 -> git tag A1 -> A2 -> git tag A2`
-
-Every experiment should always remain reproducible. No accepted experiment should ever be overwritten.
-
-### Baseline Preservation
-
-The current accepted model becomes the Reference Implementation. It is frozen. Future work never modifies it directly.
-
-Instead:
-`Reference -> Copy -> Modify -> Benchmark -> Compare -> Accept or Reject`
-
-- **If accepted**: The successor becomes the new Reference Implementation.
-- **If rejected**: The predecessor remains unchanged.
+Every accepted experiment becomes a permanent Git milestone (`A0 -> git tag A0 -> A1 -> git tag A1`). No accepted experiment should ever be overwritten.
 
 ---
 
@@ -68,7 +67,8 @@ RAGL/
 ├── A/                          # Controlled Experiments
 │   └── A0/                     # Reference Implementations
 │       ├── config.py           # Experiment constants
-│       └── index/              # Cached FAISS index + chunks
+│       ├── metadata.json       # Immutable experiment metadata
+│       └── artifacts/          # Cached FAISS index + chunks
 │
 ├── core/                       # Reusable RAG modules
 │   ├── chunker.py              
@@ -80,55 +80,21 @@ RAGL/
 │
 ├── evaluation/                 # Independent evaluation framework
 │   ├── run.py                  # Benchmark runner
+│   ├── compare.py              # Compares cached experiment artifacts
 │   ├── datasets/               # Evaluation query sets
 │   ├── metrics/                
 │   ├── reports/                # Engineering Reports
 │   ├── plots/                  # Visualizations
-│   └── cache/                  # Immutable evaluation cache
+│   └── cache/                  # Immutable evaluation evidence (local only)
 │
 ├── data/                       # Source documents
+├── BASELINE.md                 # Current Reference Implementation details
 └── environment.yml             # Conda environment
 ```
 
-*(Note: The separate PHILOSOPHY.md has been merged directly into this README to prevent redundancy.)*
-
 ---
 
-## Experimental Pipeline & Documentation
-
-Every completed experiment requires an Engineering Report inside `evaluation/reports/`.
-Every report should include:
-
-- **Objective**
-- **Hypothesis**
-- **Architecture**
-- **Benchmark Results**
-- **Visualizations**
-- **Comparison with previous baseline**
-- **Failure Analysis**
-- **Engineering Review**
-- **Final Decision**
-
-The goal is that every architectural decision can be traced back to evidence.
-
-### Human Engineering Review
-Do not automatically accept or reject experiments based solely on metrics. **The evaluator's job is to measure. The engineer's job is to decide.** 
-
-Every report must end with an Engineering Review that documents:
-- Strengths
-- Weaknesses
-- Observed Behaviour
-- Final Decision (Accepted / Rejected)
-- Reason
-
-For example, if a successor scores slightly higher numerically but produces significantly more verbose or lower-quality answers, it may still be rejected. Engineering judgment is a vital part of the scientific process.
-
-### Evaluation Cache
-All benchmark outputs are cached permanently inside `evaluation/cache/<experiment>/`. These cached outputs become immutable historical experiment records, storing: Query, Retrieved Documents, Retrieved Chunks, Prompt, Generated Answer, Retrieval Metrics, Generation Metrics, Latency, and Metadata. Experiments should only be rerun if the implementation changes.
-
----
-
-## Current Reference Implementation
+## Reference Implementation
 
 **A0** is the baseline against which every future experiment is benchmarked. It implements the simplest possible RAG pipeline:
 
@@ -156,6 +122,35 @@ The Model History is the permanent historical record of every completed experime
 
 ---
 
+## Current Benchmark
+
+Our current reference baseline (**A0**) scored:
+- **Hit Rate**: 1.000
+- **Recall@K**: 1.000
+- **Precision@K**: 1.000
+- **MRR**: 1.000
+- **NDCG**: 2.948
+- **Faithfulness**: 1.000
+- **Groundedness**: 0.500
+- **Relevancy**: 0.999
+- **Latency**: ~6.4s
+
+*All benchmark cache outputs are stored locally in `evaluation/cache/A0/` as immutable scientific evidence.*
+
+---
+
+## Roadmap
+
+Upcoming controlled experiments:
+
+- **A1**: Add BM25 sparse retrieval + Reciprocal Rank Fusion
+- **A2**: Add FlashRank cross-encoder reranking
+- **A3**: Compare embedding models (e5-large, instructor, etc.)
+- **A4**: Vary chunk sizes and overlap strategies
+- **A5**: Add multi-turn conversation context
+
+---
+
 ## Relationship with Research-OS
 
 RAGL and Research-OS operate as a tandem ecosystem with a strict one-way flow of validated knowledge and architecture:
@@ -171,16 +166,3 @@ Production AI Research Assistant
 ```
 
 **Research-OS** is the production implementation built *exclusively* from architectures validated inside RAGL. It should never be used as an experimentation playground. The success of RAGL is measured by the quality of its methodology, reproducibility, and evidence. The success of Research-OS is measured by the quality of the final user experience. 
-
----
-
-## Roadmap
-
-Upcoming controlled experiments:
-
-- **A1**: Add BM25 sparse retrieval + Reciprocal Rank Fusion
-- **A2**: Add FlashRank cross-encoder reranking
-- **A3**: Compare embedding models (e5-large, instructor, etc.)
-- **A4**: Vary chunk sizes and overlap strategies
-- **A5**: Add multi-turn conversation context
-

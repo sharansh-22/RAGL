@@ -15,7 +15,7 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 RAGL_ROOT = Path(__file__).resolve().parent.parent.parent
 DATA_DIR = str(RAGL_ROOT / "data")
-INDEX_DIR = str(RAGL_ROOT / "A" / "A0" / "index")
+INDEX_DIR = str(RAGL_ROOT / "A" / "A0" / "artifacts")
 
 # ---------------------------------------------------------------------------
 # Chunking
@@ -42,6 +42,8 @@ LLM_MODEL = "llama3:8b"
 # Evaluation
 # ---------------------------------------------------------------------------
 EXPERIMENT_NAME = "A0"
+EXPERIMENT_STATUS = "Frozen"
+VERSION = "0.1"
 EVAL_DATASETS_DIR = str(RAGL_ROOT / "evaluation" / "datasets")
 EVAL_REPORTS_DIR = str(RAGL_ROOT / "evaluation" / "reports")
 EVAL_PLOTS_DIR = str(RAGL_ROOT / "evaluation" / "plots" / "A0")
