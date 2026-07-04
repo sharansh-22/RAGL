@@ -1,0 +1,9 @@
+[
+  {
+    "id": "adversarial_01",
+    "query": "What does the textbook say about quantum computing applications in machine learning?",
+    "expected_sources": [],
+    "category": "adversarial",
+    "difficulty": "hard"
+  }
+]

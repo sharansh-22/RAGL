@@ -1,0 +1,9 @@
+[
+  {
+    "id": "math_01",
+    "query": "What is the fundamental theorem of calculus and how does it connect differentiation and integration?",
+    "expected_sources": ["mitres_18_001_f17_full_book.pdf"],
+    "category": "math",
+    "difficulty": "medium"
+  }
+]

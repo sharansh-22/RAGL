@@ -1,0 +1,9 @@
+[
+  {
+    "id": "long_context_01",
+    "query": "Provide a comprehensive summary of the multi-head attention mechanism including the mathematical formulation of queries, keys, and values, the scaling factor, and how multiple heads are concatenated and projected.",
+    "expected_sources": ["1706.03762v7.pdf"],
+    "category": "machine_learning",
+    "difficulty": "hard"
+  }
+]

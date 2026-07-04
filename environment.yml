@@ -1,0 +1,43 @@
+name: RAGL
+
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  # ---- Runtime ----
+  - python=3.10
+  - pip
+
+  # ---- PyTorch (CUDA 12.4 — RTX 4060 compatible) ----
+  - pytorch>=2.1
+  - pytorch-cuda=12.4
+
+  # ---- GPU Search ----
+  - faiss-gpu>=1.8.0
+
+  # ---- Everything else via pip ----
+  - pip:
+    # Document processing
+    - pymupdf4llm>=0.0.17
+    - pymupdf>=1.24.0
+    # Embeddings (GPU-accelerated ONNX)
+    - fastembed-gpu>=0.3.0
+    # LLM backend
+    - ollama>=0.3.0
+    # Objective evaluation (NLI + Cross-Encoder)
+    - sentence-transformers>=3.0.0
+    - nltk>=3.8.1
+    # Core
+    - numpy>=1.24.0,<2.0.0
+    - scipy>=1.11.0
+    - tqdm>=4.66.0
+    - rich>=13.7.0
+    - structlog>=24.0.0
+    # Plotting
+    - matplotlib>=3.8.0
+    # Testing
+    - pytest>=8.0.0
+    - pytest-cov>=4.1.0

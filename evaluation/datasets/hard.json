@@ -1,0 +1,9 @@
+[
+  {
+    "id": "hard_01",
+    "query": "Derive the backpropagation update rule for a single hidden layer neural network using the chain rule and explain how gradient flow relates to vanishing gradients.",
+    "expected_sources": ["Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf", "mitres_18_001_f17_full_book.pdf"],
+    "category": "machine_learning",
+    "difficulty": "hard"
+  }
+]

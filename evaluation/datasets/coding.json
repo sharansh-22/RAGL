@@ -1,0 +1,9 @@
+[
+  {
+    "id": "coding_01",
+    "query": "What are the best practices for writing unit tests in a large-scale software project?",
+    "expected_sources": ["Software Engineering at Google.pdf"],
+    "category": "software_engineering",
+    "difficulty": "medium"
+  }
+]

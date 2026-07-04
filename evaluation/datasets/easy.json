@@ -1,0 +1,16 @@
+[
+  {
+    "id": "easy_01",
+    "query": "What is the chain rule in calculus?",
+    "expected_sources": ["mitres_18_001_f17_full_book.pdf"],
+    "category": "math",
+    "difficulty": "easy"
+  },
+  {
+    "id": "easy_02",
+    "query": "What is a neural network?",
+    "expected_sources": ["Deep Learning-Josh Patterson & Adam Gibson-2017.pdf"],
+    "category": "machine_learning",
+    "difficulty": "easy"
+  }
+]

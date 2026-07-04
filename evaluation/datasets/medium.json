@@ -1,0 +1,16 @@
+[
+  {
+    "id": "medium_01",
+    "query": "Explain the attention mechanism in transformers and why it replaced recurrence.",
+    "expected_sources": ["1706.03762v7.pdf"],
+    "category": "machine_learning",
+    "difficulty": "medium"
+  },
+  {
+    "id": "medium_02",
+    "query": "What are the key principles of code review according to software engineering best practices?",
+    "expected_sources": ["Software Engineering at Google.pdf"],
+    "category": "software_engineering",
+    "difficulty": "medium"
+  }
+]
