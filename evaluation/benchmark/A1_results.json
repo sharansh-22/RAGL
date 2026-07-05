@@ -1,0 +1,141 @@
+{
+  "baseline": "A0",
+  "baseline_metrics": {
+    "retrieval": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "mrr": 1.0,
+      "ndcg": 2.9484591188793923,
+      "hit_rate": 1.0
+    },
+    "generation": {
+      "faithfulness": 1.0,
+      "groundedness": 0.5,
+      "relevancy": 0.9986231450866464
+    },
+    "latency": {
+      "total_ms": 6363.075
+    }
+  },
+  "candidates": {
+    "arctic": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.7333333333333333,
+        "mrr": 0.8333333333333334,
+        "ndcg": 2.1627178141939374,
+        "hit_rate": 0.8888888888888888
+      },
+      "generation": {
+        "faithfulness": 0.9333333333333333,
+        "groundedness": 0.1317738791423002,
+        "relevancy": 0.9982738612139368
+      },
+      "latency": {
+        "total_ms": 8584.753333333334
+      }
+    },
+    "bge_base": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.8222222222222223,
+        "mrr": 0.8333333333333334,
+        "ndcg": 2.3566506167901182,
+        "hit_rate": 0.8888888888888888
+      },
+      "generation": {
+        "faithfulness": 0.8803418803418803,
+        "groundedness": 0.08632478632478632,
+        "relevancy": 0.9991007149656697
+      },
+      "latency": {
+        "total_ms": 7246.475555555556
+      }
+    },
+    "bge_large": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.8222222222222223,
+        "mrr": 0.8888888888888888,
+        "ndcg": 2.3954371801448815,
+        "hit_rate": 0.8888888888888888
+      },
+      "generation": {
+        "faithfulness": 0.8888888888888888,
+        "groundedness": 0.12552910052910055,
+        "relevancy": 0.9992117434757753
+      },
+      "latency": {
+        "total_ms": 38666.12888888889
+      }
+    },
+    "bge_small": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.7777777777777778,
+        "mrr": 0.8148148148148148,
+        "ndcg": 2.2551258148970255,
+        "hit_rate": 0.8888888888888888
+      },
+      "generation": {
+        "faithfulness": 0.9370370370370371,
+        "groundedness": 0.07800224466891133,
+        "relevancy": 0.998926262586925
+      },
+      "latency": {
+        "total_ms": 30557.844444444443
+      }
+    },
+    "e5_base": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.7555555555555555,
+        "mrr": 0.8055555555555556,
+        "ndcg": 2.231750287713378,
+        "hit_rate": 0.8888888888888888
+      },
+      "generation": {
+        "faithfulness": 0.9454365079365079,
+        "groundedness": 0.2043650793650794,
+        "relevancy": 0.9985930828006592
+      },
+      "latency": {
+        "total_ms": 6329.448888888888
+      }
+    },
+    "e5_large": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.8,
+        "mrr": 0.8333333333333334,
+        "ndcg": 2.310681370452581,
+        "hit_rate": 0.8888888888888888
+      },
+      "generation": {
+        "faithfulness": 0.8497076023391812,
+        "groundedness": 0.21385640025990904,
+        "relevancy": 0.9965931245666924
+      },
+      "latency": {
+        "total_ms": 14863.28888888889
+      }
+    },
+    "nomic": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.8,
+        "mrr": 0.8,
+        "ndcg": 2.319601282769449,
+        "hit_rate": 0.8888888888888888
+      },
+      "generation": {
+        "faithfulness": 0.9920634920634921,
+        "groundedness": 0.1443760917445128,
+        "relevancy": 0.997996059534835
+      },
+      "latency": {
+        "total_ms": 36865.89
+      }
+    }
+  }
+}
