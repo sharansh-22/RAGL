@@ -119,6 +119,7 @@ The Model History is the permanent historical record of every completed experime
 |---------|--------|----------|-----|------|-----|-----|-------|--------|-----------|---------|----------|
 | **A0** | ✅ Reference | 1.000 | 1.000 | 2.948 | 1.000 | 1.000 | 1.000 | 0.500 | 0.999 | 6.4s | Accepted. Baseline established (2 queries). |
 | **A1** | ❌ Rejected | 0.888 | 0.888 | 2.395 | 0.822 | 0.833 | 0.888 | 0.125 | 0.999 | 38.6s | Rejected. Baseline `bge-small` retained. No candidate justified the latency cost. |
+| **A2** | ❌ Rejected | 0.888 | 0.833 | 2.267 | 0.778 | 0.833 | 0.989 | 0.222 | 0.997 | 3.8s | Rejected. Baseline retained, but `structure` chunking improved latency and brevity. |
 
 ---
 
@@ -144,9 +145,9 @@ Our current reference baseline (**A0**) scored:
 Upcoming controlled experiments:
 
 - **A1**: Embedding Model Selection Study (Completed - Rejected)
-- **A2**: Add BM25 sparse retrieval + Reciprocal Rank Fusion
-- **A3**: Add FlashRank cross-encoder reranking
-- **A4**: Vary chunk sizes and overlap strategies
+- **A2**: Chunking Strategy Selection (Completed - Rejected)
+- **A3**: Add BM25 sparse retrieval + Reciprocal Rank Fusion
+- **A4**: Add FlashRank cross-encoder reranking
 - **A5**: Add multi-turn conversation context
 
 ---

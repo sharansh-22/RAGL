@@ -1,0 +1,12 @@
+{
+  "num_chunks": 2752,
+  "avg_size": 2793.4120639534885,
+  "med_size": 2855.0,
+  "max_size": 8646.0,
+  "min_size": 4.0,
+  "configured_overlap": 64,
+  "embedding_time_sec": 6.125586145999478,
+  "index_build_time_sec": 0.0014722079995408421,
+  "chunking_time_sec": 0.11461675899954571,
+  "index_size_bytes": 4227117
+}

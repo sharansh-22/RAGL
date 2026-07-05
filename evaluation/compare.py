@@ -61,9 +61,19 @@ def load_experiment_metrics(experiment_dir: Path) -> dict:
         "latency": {k: np.mean(v) for k, v in latency_data.items() if v}
     }
     
+    # Load chunk stats if available
+    chunk_stats = {}
+    index_dir = summary.get("config", {}).get("INDEX_DIR")
+    if index_dir:
+        stats_path = Path(index_dir) / "chunk_stats.json"
+        if stats_path.exists():
+            with open(stats_path) as f:
+                chunk_stats = json.load(f)
+    
     return {
         "config": summary.get("config", {}),
-        "means": means
+        "means": means,
+        "chunk_stats": chunk_stats
     }
 
 def main():
@@ -175,24 +185,23 @@ def main():
     reports_dir.mkdir(parents=True, exist_ok=True)
     report_path = reports_dir / f"{args.candidates}_report.md"
     
+    experiment_type = "Chunking Strategy" if args.candidates == "A2" else "Embedding Model"
+    
     lines = [
-        f"# RAGL {args.candidates} — Embedding Model Study",
+        f"# RAGL {args.candidates} — {experiment_type} Study",
         f"",
-        f"**Objective**: Determine whether changing only the embedding model produces a measurable improvement in retrieval and generation quality.",
+        f"**Objective**: Determine whether changing the {experiment_type.lower()} produces a measurable improvement in retrieval and generation quality.",
         f"**Baseline**: {args.baseline}",
         f"**Candidates**: {', '.join(candidates.keys())}",
         f"",
         f"## Constraints",
-        f"- Chunk size and overlap remained identical to {args.baseline}.",
-        f"- The LLM (`llama3:8b`) remained identical.",
-        f"- The FAISS index parameters remained identical.",
         f"- Comparison uses cached benchmark JSONs. No previous experiments were regenerated.",
         f"",
         f"## Benchmark Comparison Table",
         f""
     ]
     
-    all_metrics = ["hit_rate", "mrr", "ndcg", "recall_at_k", "precision_at_k", "faithfulness", "groundedness", "relevancy"]
+    all_metrics = ["hit_rate", "mrr", "ndcg", "recall_at_k", "precision_at_k", "faithfulness", "groundedness", "relevancy", "avg_retrieved_context_len"]
     
     header = "| Model | " + " | ".join(all_metrics) + " | Latency (ms) |"
     lines.append(header)
@@ -211,6 +220,28 @@ def main():
         lat = data["means"]["latency"].get("total_ms", 0)
         row.append(f"{lat:.1f}")
         lines.append("| " + " | ".join(row) + " |")
+        
+    # Append Chunking Statistics if present
+    if any(data.get("chunk_stats") for data in [baseline_data] + list(candidates.values())):
+        lines.extend([
+            f"",
+            f"## Chunking Statistics",
+            f"",
+            f"| Model | Total Chunks | Avg Size | Med Size | Max Size | Min Size | Overlap | Index Size (KB) | Index Time (s) |",
+            f"|-------|--------------|----------|----------|----------|----------|---------|-----------------|----------------|"
+        ])
+        for name in model_names:
+            data = baseline_data if name == args.baseline else candidates[name]
+            stats = data.get("chunk_stats", {})
+            if stats:
+                idx_kb = stats.get('index_size_bytes', 0) / 1024
+                lines.append(
+                    f"| {name} | {stats.get('num_chunks', 0)} | {stats.get('avg_size', 0):.1f} | "
+                    f"{stats.get('med_size', 0):.1f} | {stats.get('max_size', 0)} | {stats.get('min_size', 0)} | "
+                    f"{stats.get('configured_overlap', 0)} | {idx_kb:.1f} | {stats.get('index_build_time_sec', 0):.2f} |"
+                )
+            else:
+                lines.append(f"| {name} | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |")
         
     lines.extend([
         f"",

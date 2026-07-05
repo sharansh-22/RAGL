@@ -138,6 +138,7 @@ def build_or_load_index(config: dict, force_rebuild: bool = False):
     chunks_path = index_dir / "chunks.json"
 
     embedder = Embedder(model_name=config["EMBEDDING_MODEL"])
+    chunker_strategy = config.get("CHUNKER_STRATEGY", "sentence")
 
     if index_path.exists() and chunks_path.exists() and not force_rebuild:
         logger.info("Loading existing index from cache...")
@@ -147,28 +148,67 @@ def build_or_load_index(config: dict, force_rebuild: bool = False):
         logger.info(f"Loaded {len(chunks)} chunks, {index.ntotal} vectors")
         return embedder, index, chunks
 
-    # Build from scratch
-    logger.info("Building index from documents...")
+    logger.info(f"Building index from documents using strategy: {chunker_strategy}")
     documents = load_documents(config["DATA_DIR"])
+    
+    chunk_start = time.perf_counter()
     chunks = chunk_documents(
         documents,
         chunk_size=config["CHUNK_SIZE"],
         chunk_overlap=config["CHUNK_OVERLAP"],
+        strategy=chunker_strategy
     )
+    chunk_time = time.perf_counter() - chunk_start
 
     # Embed all chunks
     logger.info(f"Embedding {len(chunks)} chunks...")
     texts = [c["text"] for c in chunks]
+    embed_start = time.perf_counter()
     embeddings = embedder.embed(texts)
+    embed_time = time.perf_counter() - embed_start
 
     # Build FAISS index
+    index_start = time.perf_counter()
     index = build_index(embeddings)
+    index_time = time.perf_counter() - index_start
 
     # Save to disk
     index_dir.mkdir(parents=True, exist_ok=True)
     save_index(index, str(index_path))
     with open(chunks_path, "w") as f:
         json.dump(chunks, f, indent=2)
+        
+    index_size_bytes = os.path.getsize(index_path)
+
+    # Calculate and save chunk statistics
+    if chunks:
+        chunk_sizes = [len(c["text"]) for c in chunks]
+        # Approximate overlap (just comparing length of (text_i, text_i-1) isn't exact,
+        # but we can record the configured overlap for now).
+        stats = {
+            "num_chunks": int(len(chunks)),
+            "avg_size": float(np.mean(chunk_sizes)),
+            "med_size": float(np.median(chunk_sizes)),
+            "max_size": float(np.max(chunk_sizes)),
+            "min_size": float(np.min(chunk_sizes)),
+            "configured_overlap": int(config["CHUNK_OVERLAP"]),
+            "embedding_time_sec": float(embed_time),
+            "index_build_time_sec": float(index_time),
+            "chunking_time_sec": float(chunk_time),
+            "index_size_bytes": int(index_size_bytes),
+        }
+        with open(index_dir / "chunk_stats.json", "w") as f:
+            json.dump(stats, f, indent=2)
+            
+        # Save sample chunks
+        sample_chunks_path = index_dir / "sample_chunks.md"
+        with open(sample_chunks_path, "w") as f:
+            f.write("# Representative Chunks\\n\\n")
+            for i, c in enumerate(chunks[:3]):
+                f.write(f"## Chunk {i}\\n")
+                f.write(f"**Source**: {c['source']}\\n\\n")
+                f.write(f"```text\\n{c['text']}\\n```\\n\\n")
+
     logger.info(f"Saved index and {len(chunks)} chunks to {index_dir}")
 
     return embedder, index, chunks
@@ -435,6 +475,19 @@ def cache_results(
     with open(cache_dir / "summary.json", "w") as f:
         json.dump(summary, f, indent=2)
 
+    # Save retrieval visualization
+    viz_path = cache_dir / "retrieval_visualization.md"
+    with open(viz_path, "w") as f:
+        f.write(f"# Retrieval Visualization - {experiment_name}\\n\\n")
+        for r in results:
+            f.write(f"## Query: {r['query']}\\n\\n")
+            f.write(f"**Query ID**: {r['id']}\\n\\n")
+            for chunk in r['retrieved_chunks']:
+                f.write(f"### Score: {chunk.get('score', 0):.4f} (Rank {chunk.get('rank', 0)})\\n")
+                f.write(f"**Source**: {chunk['source']}\\n\\n")
+                f.write(f"```text\\n{chunk['text']}\\n```\\n\\n")
+            f.write("---\\n\\n")
+
     logger.info(f"Cached {len(results)} results to: {cache_dir}")
 
 
@@ -518,6 +571,13 @@ def run_benchmark(
             q.get("expected_sources", []),
             k=config["TOP_K"],
         )
+        
+        # Calculate average context length
+        if result["retrieved_chunks"]:
+            avg_context_len = np.mean([len(c["text"]) for c in result["retrieved_chunks"]])
+        else:
+            avg_context_len = 0.0
+        ret_metrics["avg_retrieved_context_len"] = float(avg_context_len)
 
         # Compute generation metrics
         gen_metrics = compute_all_generation_metrics(

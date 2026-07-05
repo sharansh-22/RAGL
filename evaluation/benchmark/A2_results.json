@@ -1,0 +1,94 @@
+{
+  "baseline": "A0",
+  "baseline_metrics": {
+    "retrieval": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "mrr": 1.0,
+      "ndcg": 2.9484591188793923,
+      "hit_rate": 1.0
+    },
+    "generation": {
+      "faithfulness": 1.0,
+      "groundedness": 0.5,
+      "relevancy": 0.9986231450866464
+    },
+    "latency": {
+      "total_ms": 6363.075
+    }
+  },
+  "candidates": {
+    "recursive": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.8,
+        "mrr": 0.8333333333333334,
+        "ndcg": 2.2933866297219594,
+        "hit_rate": 0.8888888888888888,
+        "avg_retrieved_context_len": 2964.7555555555555
+      },
+      "generation": {
+        "faithfulness": 0.8276455026455027,
+        "groundedness": 0.12328042328042328,
+        "relevancy": 0.9975917631770214
+      },
+      "latency": {
+        "total_ms": 6661.602222222222
+      }
+    },
+    "semantic": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.7555555555555555,
+        "mrr": 0.8148148148148148,
+        "ndcg": 2.214222763081386,
+        "hit_rate": 0.8888888888888888,
+        "avg_retrieved_context_len": 343.1777777777778
+      },
+      "generation": {
+        "faithfulness": 0.75,
+        "groundedness": 0.3231481481481482,
+        "relevancy": 0.999604360789122
+      },
+      "latency": {
+        "total_ms": 4046.4155555555553
+      }
+    },
+    "sentence": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.7777777777777778,
+        "mrr": 0.8148148148148148,
+        "ndcg": 2.2551258148970255,
+        "hit_rate": 0.8888888888888888,
+        "avg_retrieved_context_len": 3084.4666666666667
+      },
+      "generation": {
+        "faithfulness": 0.9506172839506173,
+        "groundedness": 0.12866762866762865,
+        "relevancy": 0.9987869749717455
+      },
+      "latency": {
+        "total_ms": 7985.6066666666675
+      }
+    },
+    "structure": {
+      "retrieval": {
+        "recall_at_k": 0.8333333333333334,
+        "precision_at_k": 0.7777777777777778,
+        "mrr": 0.8333333333333334,
+        "ndcg": 2.2670313283031485,
+        "hit_rate": 0.8888888888888888,
+        "avg_retrieved_context_len": 1415.2666666666669
+      },
+      "generation": {
+        "faithfulness": 0.9888888888888889,
+        "groundedness": 0.2222222222222222,
+        "relevancy": 0.9970272537176815
+      },
+      "latency": {
+        "total_ms": 3885.4533333333334
+      }
+    }
+  }
+}

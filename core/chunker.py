@@ -1,22 +1,18 @@
 """
-RAGL — Chunker
-===============
-Responsible for:
-  - Loading documents from a directory (PDF via pymupdf4llm)
-  - Sentence-aware recursive chunking with metadata preservation
-
-Not responsible for embedding, indexing, or retrieval.
+RAGL — Chunker Factory
+======================
+Delegates chunking to a specific strategy module in `core/chunkers/`.
+Defaults to `sentence` for backward compatibility with A0.
 """
 
-import os
-import re
 import logging
+import os
 from pathlib import Path
-
 import pymupdf4llm
 
-logger = logging.getLogger(__name__)
+from core.chunkers import RecursiveChunker, SentenceChunker, StructureChunker, SemanticChunker
 
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Document Loading
@@ -25,11 +21,6 @@ logger = logging.getLogger(__name__)
 def load_documents(data_dir: str) -> list[dict]:
     """
     Recursively walk `data_dir`, extract text from every PDF.
-
-    Returns:
-        List of dicts: [{text, source, category}]
-        - source: filename (e.g., "1706.03762v7.pdf")
-        - category: immediate parent directory name (e.g., "Machine learning")
     """
     data_path = Path(data_dir)
     if not data_path.exists():
@@ -46,9 +37,7 @@ def load_documents(data_dir: str) -> list[dict]:
     for pdf_path in pdf_files:
         logger.info(f"Extracting text from: {pdf_path.name}")
         try:
-            # pymupdf4llm returns markdown-formatted text
             text = pymupdf4llm.to_markdown(str(pdf_path))
-
             if not text or not text.strip():
                 logger.warning(f"Empty text extracted from: {pdf_path.name}")
                 continue
@@ -65,153 +54,35 @@ def load_documents(data_dir: str) -> list[dict]:
     logger.info(f"Successfully loaded {len(documents)} documents")
     return documents
 
-
 # ---------------------------------------------------------------------------
-# Sentence-Aware Recursive Chunking
+# Factory Delegation
 # ---------------------------------------------------------------------------
-
-# Sentence boundary pattern: split on period/question/exclamation followed by
-# whitespace and an uppercase letter, or on newlines.
-_SENTENCE_PATTERN = re.compile(
-    r'(?<=[.!?])\s+(?=[A-Z])'   # sentence boundary
-    r'|(?:\n\s*\n)',             # paragraph boundary (double newline)
-)
-
-
-def _split_into_sentences(text: str) -> list[str]:
-    """Split text into sentence-like segments preserving boundaries."""
-    # Use regex split but keep the separators by using a lookahead/lookbehind
-    sentences = _SENTENCE_PATTERN.split(text)
-    # Filter out empty strings
-    return [s.strip() for s in sentences if s and s.strip()]
-
-
-def _approximate_token_count(text: str) -> int:
-    """
-    Approximate token count using whitespace splitting.
-    This is a rough estimate (~1.3 tokens per word for English).
-    Good enough for chunking purposes.
-    """
-    return len(text.split())
-
 
 def chunk_documents(
     documents: list[dict],
     chunk_size: int = 512,
     chunk_overlap: int = 64,
+    strategy: str = "sentence"
 ) -> list[dict]:
     """
-    Sentence-aware recursive chunking.
-
-    Strategy:
-        1. Split document into sentences.
-        2. Accumulate sentences until approximate token count reaches chunk_size.
-        3. When a chunk is full, create a new chunk starting from an overlap
-           point (approximately chunk_overlap tokens back from the end).
-        4. Preserve metadata (source, category) for every chunk.
-
-    Args:
-        documents: List of dicts from load_documents().
-        chunk_size: Target chunk size in approximate tokens.
-        chunk_overlap: Overlap between consecutive chunks in approximate tokens.
-
-    Returns:
-        List of dicts: [{text, source, category, chunk_index, doc_index}]
+    Factory that delegates chunking to a specific strategy.
+    
+    Strategies:
+      - "sentence": Sentence-aware recursive chunking (A0 default)
+      - "recursive": Recursive character chunking
+      - "structure": Markdown heading chunking
+      - "semantic": Semantic similarity boundary chunking
     """
-    all_chunks = []
-
-    for doc_idx, doc in enumerate(documents):
-        sentences = _split_into_sentences(doc["text"])
-
-        if not sentences:
-            logger.warning(f"No sentences extracted from: {doc['source']}")
-            continue
-
-        chunks = _build_chunks_from_sentences(
-            sentences, chunk_size, chunk_overlap
-        )
-
-        for chunk_idx, chunk_text in enumerate(chunks):
-            all_chunks.append({
-                "text": chunk_text,
-                "source": doc["source"],
-                "category": doc["category"],
-                "chunk_index": chunk_idx,
-                "doc_index": doc_idx,
-            })
-
-        logger.info(
-            f"  {doc['source']}: {len(chunks)} chunks "
-            f"from {len(sentences)} sentences"
-        )
-
-    logger.info(f"Total chunks created: {len(all_chunks)}")
-    return all_chunks
-
-
-def _build_chunks_from_sentences(
-    sentences: list[str],
-    chunk_size: int,
-    chunk_overlap: int,
-) -> list[str]:
-    """
-    Accumulate sentences into chunks respecting approximate token limits.
-
-    When a chunk exceeds chunk_size tokens, finalize it and start a new chunk
-    with overlap by rewinding approximately chunk_overlap tokens worth of
-    sentences.
-    """
-    chunks = []
-    current_sentences = []
-    current_tokens = 0
-
-    i = 0
-    while i < len(sentences):
-        sentence = sentences[i]
-        sentence_tokens = _approximate_token_count(sentence)
-
-        # If a single sentence exceeds chunk_size, it becomes its own chunk
-        if sentence_tokens > chunk_size:
-            if current_sentences:
-                chunks.append(" ".join(current_sentences))
-            chunks.append(sentence)
-            current_sentences = []
-            current_tokens = 0
-            i += 1
-            continue
-
-        # If adding this sentence would exceed the limit, finalize the chunk
-        if current_tokens + sentence_tokens > chunk_size and current_sentences:
-            chunks.append(" ".join(current_sentences))
-
-            # Rewind for overlap: find the starting sentence for the next chunk
-            overlap_tokens = 0
-            rewind_count = 0
-            for j in range(len(current_sentences) - 1, -1, -1):
-                s_tokens = _approximate_token_count(current_sentences[j])
-                if overlap_tokens + s_tokens > chunk_overlap:
-                    break
-                if overlap_tokens + s_tokens + sentence_tokens > chunk_size:
-                    break
-                overlap_tokens += s_tokens
-                rewind_count += 1
-
-            # Start new chunk with overlapping sentences
-            if rewind_count > 0:
-                current_sentences = current_sentences[-rewind_count:]
-                current_tokens = sum(
-                    _approximate_token_count(s) for s in current_sentences
-                )
-            else:
-                current_sentences = []
-                current_tokens = 0
-
-        current_sentences.append(sentence)
-        current_tokens += sentence_tokens
-        i += 1
-
-    # Finalize the last chunk
-    if current_sentences:
-        chunks.append(" ".join(current_sentences))
-
-    return chunks
+    logger.info(f"Using chunking strategy: {strategy}")
+    
+    if strategy == "recursive":
+        chunker = RecursiveChunker(chunk_size, chunk_overlap)
+    elif strategy == "structure":
+        chunker = StructureChunker(chunk_size, chunk_overlap)
+    elif strategy == "semantic":
+        chunker = SemanticChunker(chunk_size, chunk_overlap)
+    else:
+        # Default for backward compatibility with A0 and A1
+        chunker = SentenceChunker(chunk_size, chunk_overlap)
+        
+    return chunker.chunk_documents(documents)
