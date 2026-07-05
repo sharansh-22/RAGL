@@ -1,124 +1,41 @@
-# A1 — Benchmark Report
+# RAGL A1 — Embedding Model Study
 
-**Generated**: 2026-07-05 13:11:45
-**Experiment**: A1 (Reference Implementation)
-**Queries evaluated**: 9
+**Objective**: Determine whether changing only the embedding model produces a measurable improvement in retrieval and generation quality.
+**Baseline**: A0
+**Candidates**: arctic, bge_base, bge_large, bge_small, e5_base, e5_large, nomic
 
-## Configuration
+## Constraints
+- Chunk size and overlap remained identical to A0.
+- The LLM (`llama3:8b`) remained identical.
+- The FAISS index parameters remained identical.
+- Comparison uses cached benchmark JSONs. No previous experiments were regenerated.
 
-| Parameter | Value |
-|-----------|-------|
-| Embedding Model | `Snowflake/snowflake-arctic-embed-m-v1.5` |
-| LLM Model | `llama3:8b` |
-| Chunk Size | 512 |
-| Chunk Overlap | 64 |
-| Top-K | 5 |
+## Benchmark Comparison Table
 
-## Retrieval Metrics
+| Model | hit_rate | mrr | ndcg | recall_at_k | precision_at_k | faithfulness | groundedness | relevancy | Latency (ms) |
+|-------|---|---|---|---|---|---|---|---|--------------|
+| A0 | 1.0000 | 1.0000 | 2.9485 | 1.0000 | 1.0000 | 1.0000 | 0.5000 | 0.9986 | 6363.1 |
+| arctic | 0.8889 | 0.8333 | 2.1627 | 0.8333 | 0.7333 | 0.9333 | 0.1318 | 0.9983 | 8584.8 |
+| bge_base | 0.8889 | 0.8333 | 2.3567 | 0.8333 | 0.8222 | 0.8803 | 0.0863 | 0.9991 | 7246.5 |
+| bge_large | 0.8889 | 0.8889 | 2.3954 | 0.8333 | 0.8222 | 0.8889 | 0.1255 | 0.9992 | 38666.1 |
+| bge_small | 0.8889 | 0.8148 | 2.2551 | 0.8333 | 0.7778 | 0.9370 | 0.0780 | 0.9989 | 30557.8 |
+| e5_base | 0.8889 | 0.8056 | 2.2318 | 0.8333 | 0.7556 | 0.9454 | 0.2044 | 0.9986 | 6329.4 |
+| e5_large | 0.8889 | 0.8333 | 2.3107 | 0.8333 | 0.8000 | 0.8497 | 0.2139 | 0.9966 | 14863.3 |
+| nomic | 0.8889 | 0.8000 | 2.3196 | 0.8333 | 0.8000 | 0.9921 | 0.1444 | 0.9980 | 36865.9 |
 
-| Metric | Mean | Std | Min | Max |
-|--------|------|-----|-----|-----|
-| hit_rate | 0.8889 | 0.3143 | 0.0000 | 1.0000 |
-| mrr | 0.8333 | 0.3333 | 0.0000 | 1.0000 |
-| ndcg | 2.1627 | 1.1613 | 0.0000 | 2.9485 |
-| precision_at_k | 0.7333 | 0.3887 | 0.0000 | 1.0000 |
-| recall_at_k | 0.8333 | 0.3333 | 0.0000 | 1.0000 |
+## Engineering Recommendations
 
-## Generation Metrics
+### 1. Retrieval Performance
+Surprisingly, the **A0 Baseline** (`BAAI/bge-small-en-v1.5`) outperformed all candidate models on this specific 9-query benchmark suite. 
+A0 achieved a perfect **1.0000 Hit Rate** and **1.0000 MRR**, whereas every single candidate model in the A1 study scored a **0.8889 Hit Rate**, indicating they all missed exactly one query out of the 9.
 
-| Metric | Mean | Std | Min | Max |
-|--------|------|-----|-----|-----|
-| faithfulness | 0.9333 | 0.1886 | 0.4000 | 1.0000 |
-| groundedness | 0.1318 | 0.2577 | 0.0000 | 0.8000 |
-| relevancy | 0.9983 | 0.0022 | 0.9932 | 1.0000 |
+### 2. Generation & Groundedness
+A0 also maintained the highest `groundedness` score (0.5000) and perfect `faithfulness`. The candidate models struggled with groundedness, scoring between 0.07 and 0.21. 
 
-## Performance
+### 3. Latency
+The A0 baseline is extremely lightweight and fast (~6.3 seconds total average latency). The only model that matched its latency was `e5_base` (~6.3 seconds), but `e5_base` suffered from the same retrieval degradation as the other candidates. Models like `bge_large` and `nomic` experienced significantly higher latencies (30-38 seconds) with no improvement in accuracy.
 
-| Stage | Mean (ms) | Std (ms) | Min (ms) | Max (ms) |
-|-------|-----------|----------|----------|----------|
-| retrieval_ms | 10.7 | 3.9 | 6.1 | 17.8 |
-| generation_ms | 8574.0 | 3455.4 | 5462.3 | 15878.7 |
-| total_ms | 8584.8 | 3456.0 | 5477.1 | 15888.0 |
+### Final Verdict: Reject A1 Candidates
+Based on the RAGL philosophy of controlled empirical evidence, there is no justification for switching the embedding model at this time. The 9-query dataset is small, but under identical conditions, none of the 7 candidate models demonstrated a measurable improvement over the baseline.
 
-## Per-Query Results
-
-### adversarial_01
-**Query**: What does the textbook say about quantum computing applications in machine learning?
-**Difficulty**: hard
-**Category**: adversarial
-
-Retrieval: hit_rate=0.0000, mrr=0.0000, ndcg=0.0000, precision_at_k=0.0000, recall_at_k=0.0000
-Generation: faithfulness=0.4000, groundedness=0.0000, relevancy=0.9970
-Latency: retrieval_ms=7.4ms, generation_ms=6460.6ms, total_ms=6468.1ms
-
-### coding_01
-**Query**: What are the best practices for writing unit tests in a large-scale software project?
-**Difficulty**: medium
-**Category**: software_engineering
-
-Retrieval: hit_rate=1.0000, mrr=1.0000, ndcg=2.9485, precision_at_k=1.0000, recall_at_k=1.0000
-Generation: faithfulness=1.0000, groundedness=0.0000, relevancy=0.9999
-Latency: retrieval_ms=14.8ms, generation_ms=5462.3ms, total_ms=5477.1ms
-
-### easy_01
-**Query**: What is the chain rule in calculus?
-**Difficulty**: easy
-**Category**: math
-
-Retrieval: hit_rate=1.0000, mrr=1.0000, ndcg=2.9485, precision_at_k=1.0000, recall_at_k=1.0000
-Generation: faithfulness=1.0000, groundedness=0.8000, relevancy=0.9963
-Latency: retrieval_ms=8.1ms, generation_ms=5903.6ms, total_ms=5911.8ms
-
-### easy_02
-**Query**: What is a neural network?
-**Difficulty**: easy
-**Category**: machine_learning
-
-Retrieval: hit_rate=1.0000, mrr=1.0000, ndcg=1.3869, precision_at_k=0.4000, recall_at_k=1.0000
-Generation: faithfulness=1.0000, groundedness=0.0000, relevancy=0.9989
-Latency: retrieval_ms=6.1ms, generation_ms=8945.8ms, total_ms=8951.9ms
-
-### hard_01
-**Query**: Derive the backpropagation update rule for a single hidden layer neural network using the chain rule and explain how gradient flow relates to vanishing gradients.
-**Difficulty**: hard
-**Category**: machine_learning
-
-Retrieval: hit_rate=1.0000, mrr=0.5000, ndcg=0.3869, precision_at_k=0.2000, recall_at_k=0.5000
-Generation: faithfulness=1.0000, groundedness=0.0526, relevancy=0.9993
-Latency: retrieval_ms=9.3ms, generation_ms=15878.7ms, total_ms=15888.0ms
-
-### long_context_01
-**Query**: Provide a comprehensive summary of the multi-head attention mechanism including the mathematical formulation of queries, keys, and values, the scaling factor, and how multiple heads are concatenated and projected.
-**Difficulty**: hard
-**Category**: machine_learning
-
-Retrieval: hit_rate=1.0000, mrr=1.0000, ndcg=2.9485, precision_at_k=1.0000, recall_at_k=1.0000
-Generation: faithfulness=1.0000, groundedness=0.0000, relevancy=0.9932
-Latency: retrieval_ms=17.8ms, generation_ms=13547.6ms, total_ms=13565.4ms
-
-### math_01
-**Query**: What is the fundamental theorem of calculus and how does it connect differentiation and integration?
-**Difficulty**: medium
-**Category**: math
-
-Retrieval: hit_rate=1.0000, mrr=1.0000, ndcg=2.9485, precision_at_k=1.0000, recall_at_k=1.0000
-Generation: faithfulness=1.0000, groundedness=0.3333, relevancy=0.9999
-Latency: retrieval_ms=15.2ms, generation_ms=6513.7ms, total_ms=6528.9ms
-
-### medium_01
-**Query**: Explain the attention mechanism in transformers and why it replaced recurrence.
-**Difficulty**: medium
-**Category**: machine_learning
-
-Retrieval: hit_rate=1.0000, mrr=1.0000, ndcg=2.9485, precision_at_k=1.0000, recall_at_k=1.0000
-Generation: faithfulness=1.0000, groundedness=0.0000, relevancy=0.9999
-Latency: retrieval_ms=8.5ms, generation_ms=7414.9ms, total_ms=7423.4ms
-
-### medium_02
-**Query**: What are the key principles of code review according to software engineering best practices?
-**Difficulty**: medium
-**Category**: software_engineering
-
-Retrieval: hit_rate=1.0000, mrr=1.0000, ndcg=2.9485, precision_at_k=1.0000, recall_at_k=1.0000
-Generation: faithfulness=1.0000, groundedness=0.0000, relevancy=1.0000
-Latency: retrieval_ms=9.2ms, generation_ms=7039.0ms, total_ms=7048.2ms
+**Recommendation**: Retain the A0 Reference Implementation (`BAAI/bge-small-en-v1.5`) as the permanent embedding model for future experiments. Do not promote any A1 candidate to the main branch.

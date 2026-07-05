@@ -173,7 +173,7 @@ def main():
     # -----------------------------------------------------------------------
     reports_dir = RAGL_ROOT / "evaluation" / "reports"
     reports_dir.mkdir(parents=True, exist_ok=True)
-    report_path = reports_dir / f"{args.candidates}_embedding_study.md"
+    report_path = reports_dir / f"{args.candidates}_report.md"
     
     lines = [
         f"# RAGL {args.candidates} — Embedding Model Study",
