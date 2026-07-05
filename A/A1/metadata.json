@@ -1,7 +1,7 @@
 {
   "experiment": "A1",
   "objective": "Determine whether changing only the embedding model produces a measurable improvement in retrieval and generation quality.",
-  "status": "Active",
+  "status": "Rejected",
   "baseline_reference": "A0",
   "variable": "Embedding Model",
   "models_tested": [

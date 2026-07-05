@@ -13,7 +13,6 @@ import logging
 import time
 
 import faiss
-import numpy as np
 
 from core.embedder import Embedder
 from core.retriever import retrieve

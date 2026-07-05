@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use RAGL in your research or project, please cite it as below."
+authors:
+  - family-names: "Research"
+    given-names: "OS"
+title: "RAGL: Retrieval-Augmented Generation Laboratory"
+version: 1.0.0
+date-released: 2026-07-05
+url: "https://github.com/example/RAGL"
+description: >
+  RAGL is a scientific framework for designing, benchmarking, and validating RAG architectures.
+  It enforces strict one-variable-per-experiment pipelines to objectively evaluate retrieval systems.

@@ -1,0 +1,90 @@
+{
+  "baseline": "A0",
+  "baseline_metrics": {
+    "retrieval": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 1.0,
+      "mrr": 1.0,
+      "ndcg": 2.9484591188793923,
+      "hit_rate": 1.0
+    },
+    "generation": {
+      "faithfulness": 1.0,
+      "groundedness": 0.5,
+      "relevancy": 0.9986231450866464
+    },
+    "latency": {
+      "total_ms": 6363.075
+    }
+  },
+  "candidates": {
+    "A0_No_Reranker": {
+      "retrieval": {
+        "recall_at_k": 0.9,
+        "precision_at_k": 0.8400000000000001,
+        "mrr": 0.8666666666666666,
+        "ndcg": 2.3901509954870104,
+        "hit_rate": 1.0
+      },
+      "generation": {
+        "faithfulness": 1.0,
+        "groundedness": 0.15555555555555553,
+        "relevancy": 0.9996454797068642
+      },
+      "latency": {
+        "total_ms": 5587.794
+      }
+    },
+    "BGE_Reranker_Base": {
+      "retrieval": {
+        "recall_at_k": 0.9,
+        "precision_at_k": 0.76,
+        "mrr": 0.9,
+        "ndcg": 2.2726319834888353,
+        "hit_rate": 1.0
+      },
+      "generation": {
+        "faithfulness": 1.0,
+        "groundedness": 0.038181818181818185,
+        "relevancy": 0.996071327504908
+      },
+      "latency": {
+        "total_ms": 8047.317999999999
+      }
+    },
+    "CrossEncoder_MiniLM": {
+      "retrieval": {
+        "recall_at_k": 0.9,
+        "precision_at_k": 0.8,
+        "mrr": 0.9,
+        "ndcg": 2.3200715260426947,
+        "hit_rate": 1.0
+      },
+      "generation": {
+        "faithfulness": 0.9428571428571428,
+        "groundedness": 0.09523809523809523,
+        "relevancy": 0.9991844759282017
+      },
+      "latency": {
+        "total_ms": 6693.086
+      }
+    },
+    "FlashRank_MiniLM": {
+      "retrieval": {
+        "recall_at_k": 0.9,
+        "precision_at_k": 0.7200000000000001,
+        "mrr": 0.8666666666666666,
+        "ndcg": 2.1391549407719515,
+        "hit_rate": 1.0
+      },
+      "generation": {
+        "faithfulness": 0.9866666666666667,
+        "groundedness": 0.16,
+        "relevancy": 0.792615358939927
+      },
+      "latency": {
+        "total_ms": 6322.526
+      }
+    }
+  }
+}

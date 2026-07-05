@@ -185,7 +185,12 @@ def main():
     reports_dir.mkdir(parents=True, exist_ok=True)
     report_path = reports_dir / f"{args.candidates}_report.md"
     
-    experiment_type = "Chunking Strategy" if args.candidates == "A2" else "Embedding Model"
+    if args.candidates == "A2":
+        experiment_type = "Chunking Strategy"
+    elif args.candidates == "A3":
+        experiment_type = "Reranker Model"
+    else:
+        experiment_type = "Embedding Model"
     
     lines = [
         f"# RAGL {args.candidates} — {experiment_type} Study",
@@ -203,9 +208,9 @@ def main():
     
     all_metrics = ["hit_rate", "mrr", "ndcg", "recall_at_k", "precision_at_k", "faithfulness", "groundedness", "relevancy", "avg_retrieved_context_len"]
     
-    header = "| Model | " + " | ".join(all_metrics) + " | Latency (ms) |"
+    header = "| Model | " + " | ".join(all_metrics) + " | Reranking (ms) | Latency (ms) |"
     lines.append(header)
-    lines.append("|-------|" + "|".join(["---"] * len(all_metrics)) + "|--------------|")
+    lines.append("|-------|" + "|".join(["---"] * len(all_metrics)) + "|----------------|--------------|")
     
     for name in model_names:
         data = baseline_data if name == args.baseline else candidates[name]
@@ -217,7 +222,10 @@ def main():
                 row.append(f"{data['means']['generation'][m]:.4f}")
             else:
                 row.append("N/A")
+        
+        rerank_lat = data["means"]["latency"].get("reranking_ms", 0)
         lat = data["means"]["latency"].get("total_ms", 0)
+        row.append(f"{rerank_lat:.1f}")
         row.append(f"{lat:.1f}")
         lines.append("| " + " | ".join(row) + " |")
         

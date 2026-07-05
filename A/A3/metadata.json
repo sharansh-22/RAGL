@@ -1,0 +1,13 @@
+{
+  "experiment": "A3",
+  "objective": "Determine whether adding a reranking stage to the A0 retrieval pipeline produces a measurable improvement in retrieval and generation quality.",
+  "status": "Rejected",
+  "baseline_reference": "A0",
+  "variable": "Reranker",
+  "models_tested": [
+    "A0_No_Reranker",
+    "BGE_Reranker_Base",
+    "CrossEncoder_MiniLM",
+    "FlashRank_MiniLM"
+  ]
+}

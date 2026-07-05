@@ -1,0 +1,255 @@
+{
+  "audit_passed": true,
+  "test_cases": [
+    {
+      "test_case": "Perfect Match",
+      "retrieved": [
+        "A",
+        "B",
+        "C"
+      ],
+      "expected": [
+        "A",
+        "B",
+        "C"
+      ],
+      "k": null,
+      "manual_calculation": {
+        "hit_rate": 1.0,
+        "recall_at_k": 1.0,
+        "precision_at_k": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0
+      },
+      "evaluator_output": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hit_rate": 1.0
+      },
+      "passed": true,
+      "errors": []
+    },
+    {
+      "test_case": "Partial Match Top",
+      "retrieved": [
+        "A",
+        "X",
+        "Y"
+      ],
+      "expected": [
+        "A",
+        "B"
+      ],
+      "k": null,
+      "manual_calculation": {
+        "hit_rate": 1.0,
+        "recall_at_k": 0.5,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg": 0.6131471927654584
+      },
+      "evaluator_output": {
+        "recall_at_k": 0.5,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 1.0,
+        "ndcg": 0.6131471927654584,
+        "hit_rate": 1.0
+      },
+      "passed": true,
+      "errors": []
+    },
+    {
+      "test_case": "Late Match",
+      "retrieved": [
+        "X",
+        "Y",
+        "A"
+      ],
+      "expected": [
+        "A"
+      ],
+      "k": null,
+      "manual_calculation": {
+        "hit_rate": 1.0,
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.5
+      },
+      "evaluator_output": {
+        "recall_at_k": 1.0,
+        "precision_at_k": 0.3333333333333333,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.5,
+        "hit_rate": 1.0
+      },
+      "passed": true,
+      "errors": []
+    },
+    {
+      "test_case": "No Match",
+      "retrieved": [
+        "X",
+        "Y",
+        "Z"
+      ],
+      "expected": [
+        "A",
+        "B"
+      ],
+      "k": null,
+      "manual_calculation": {
+        "hit_rate": 0.0,
+        "recall_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0
+      },
+      "evaluator_output": {
+        "recall_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hit_rate": 0.0
+      },
+      "passed": true,
+      "errors": []
+    },
+    {
+      "test_case": "Duplicates in Retrieval",
+      "retrieved": [
+        "A",
+        "A",
+        "B"
+      ],
+      "expected": [
+        "A",
+        "C"
+      ],
+      "k": null,
+      "manual_calculation": {
+        "hit_rate": 1.0,
+        "recall_at_k": 0.5,
+        "precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 1.0
+      },
+      "evaluator_output": {
+        "recall_at_k": 0.5,
+        "precision_at_k": 0.6666666666666666,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hit_rate": 1.0
+      },
+      "passed": true,
+      "errors": []
+    },
+    {
+      "test_case": "Empty Expected",
+      "retrieved": [
+        "A"
+      ],
+      "expected": [],
+      "k": null,
+      "manual_calculation": {
+        "hit_rate": 0.0,
+        "recall_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0
+      },
+      "evaluator_output": {
+        "recall_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hit_rate": 0.0
+      },
+      "passed": true,
+      "errors": []
+    },
+    {
+      "test_case": "Empty Retrieval",
+      "retrieved": [],
+      "expected": [
+        "A"
+      ],
+      "k": null,
+      "manual_calculation": {
+        "hit_rate": 0.0,
+        "recall_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0
+      },
+      "evaluator_output": {
+        "recall_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.0,
+        "ndcg": 0.0,
+        "hit_rate": 0.0
+      },
+      "passed": true,
+      "errors": []
+    },
+    {
+      "test_case": "K Limit 1",
+      "retrieved": [
+        "A",
+        "B",
+        "C"
+      ],
+      "expected": [
+        "A",
+        "C"
+      ],
+      "k": 1,
+      "manual_calculation": {
+        "hit_rate": 1.0,
+        "recall_at_k": 0.5,
+        "precision_at_k": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0
+      },
+      "evaluator_output": {
+        "recall_at_k": 0.5,
+        "precision_at_k": 1.0,
+        "mrr": 1.0,
+        "ndcg": 1.0,
+        "hit_rate": 1.0
+      },
+      "passed": true,
+      "errors": []
+    },
+    {
+      "test_case": "K Limit 2",
+      "retrieved": [
+        "A",
+        "B",
+        "C"
+      ],
+      "expected": [
+        "C"
+      ],
+      "k": 2,
+      "manual_calculation": {
+        "hit_rate": 1.0,
+        "recall_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.0
+      },
+      "evaluator_output": {
+        "recall_at_k": 0.0,
+        "precision_at_k": 0.0,
+        "mrr": 0.3333333333333333,
+        "ndcg": 0.0,
+        "hit_rate": 1.0
+      },
+      "passed": true,
+      "errors": []
+    }
+  ]
+}

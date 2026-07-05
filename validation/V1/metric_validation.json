@@ -1,0 +1,22 @@
+{
+  "audit_passed": true,
+  "errors": [],
+  "results": {
+    "faithfulness_sensitivity": {
+      "perfect": 1.0,
+      "one_hallucination": 0.5,
+      "two_hallucinations": 0.3333333333333333,
+      "completely_irrelevant": 0.0
+    },
+    "groundedness_sensitivity": {
+      "perfect": 1.0,
+      "one_hallucination": 0.5,
+      "multi_chunk_perfect": 1.0,
+      "multi_chunk_partial": 0.5
+    },
+    "relevancy": {
+      "highly_relevant": 0.9996810659202263,
+      "highly_irrelevant": 1.2848140924729356e-05
+    }
+  }
+}

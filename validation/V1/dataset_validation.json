@@ -1,0 +1,12 @@
+{
+  "audit_passed": true,
+  "errors": [],
+  "document_frequency": {
+    "Software Engineering at Google.pdf": 2,
+    "1706.03762v7.pdf": 2,
+    "mitres_18_001_f17_full_book.pdf": 3,
+    "Deep Learning-Josh Patterson & Adam Gibson-2017.pdf": 1,
+    "Bishop-Pattern-Recognition-and-Machine-Learning-2006.pdf": 1
+  },
+  "total_queries": 9
+}
