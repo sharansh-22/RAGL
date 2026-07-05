@@ -26,7 +26,7 @@
 ## Engineering Recommendations
 
 ### 1. Retrieval Performance
-Surprisingly, the **A0 Baseline** (`all-MiniLM-L6-v2`) outperformed all candidate models on this specific 9-query benchmark suite. 
+Surprisingly, the **A0 Baseline** (`BAAI/bge-small-en-v1.5`) outperformed all candidate models on this specific 9-query benchmark suite. 
 A0 achieved a perfect **1.0000 Hit Rate** and **1.0000 MRR**, whereas every single candidate model in the A1 study scored a **0.8889 Hit Rate**, indicating they all missed exactly one query out of the 9.
 
 ### 2. Generation & Groundedness
@@ -38,4 +38,4 @@ The A0 baseline is extremely lightweight and fast (~6.3 seconds total average la
 ### Final Verdict: Reject A1 Candidates
 Based on the RAGL philosophy of controlled empirical evidence, there is no justification for switching the embedding model at this time. The 9-query dataset is small, but under identical conditions, none of the 7 candidate models demonstrated a measurable improvement over the baseline.
 
-**Recommendation**: Retain the A0 Reference Implementation (`all-MiniLM-L6-v2`) as the permanent embedding model for future experiments. Do not promote any A1 candidate to the main branch.
+**Recommendation**: Retain the A0 Reference Implementation (`BAAI/bge-small-en-v1.5`) as the permanent embedding model for future experiments. Do not promote any A1 candidate to the main branch.

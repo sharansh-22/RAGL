@@ -117,8 +117,8 @@ The Model History is the permanent historical record of every completed experime
 
 | Version | Status | Hit Rate | MRR | NDCG | P@K | R@K | Faith | Ground | Relevancy | Latency | Decision |
 |---------|--------|----------|-----|------|-----|-----|-------|--------|-----------|---------|----------|
-| **A0** | ✅ Reference | 1.000 | 1.000 | 2.948 | 1.000 | 1.000 | 1.000 | 0.500 | 0.999 | 6.4s | Accepted. Baseline established. |
-| **A1** | Planned | - | - | - | - | - | - | - | - | - | Add BM25 sparse retrieval. |
+| **A0** | ✅ Reference | 1.000 | 1.000 | 2.948 | 1.000 | 1.000 | 1.000 | 0.500 | 0.999 | 6.4s | Accepted. Baseline established (2 queries). |
+| **A1** | ❌ Rejected | 0.888 | 0.888 | 2.395 | 0.822 | 0.833 | 0.888 | 0.125 | 0.999 | 38.6s | Rejected. Baseline `bge-small` retained. No candidate justified the latency cost. |
 
 ---
 
@@ -143,9 +143,9 @@ Our current reference baseline (**A0**) scored:
 
 Upcoming controlled experiments:
 
-- **A1**: Add BM25 sparse retrieval + Reciprocal Rank Fusion
-- **A2**: Add FlashRank cross-encoder reranking
-- **A3**: Compare embedding models (e5-large, instructor, etc.)
+- **A1**: Embedding Model Selection Study (Completed - Rejected)
+- **A2**: Add BM25 sparse retrieval + Reciprocal Rank Fusion
+- **A3**: Add FlashRank cross-encoder reranking
 - **A4**: Vary chunk sizes and overlap strategies
 - **A5**: Add multi-turn conversation context
 
